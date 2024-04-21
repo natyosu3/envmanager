@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <title>Sign Up</title>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Sign Up</h1>
+
+        <h2 class="text-center mb-4"><a href="/auth/discord/login" class="btn btn-primary btn-lg">Discordでログイン</a></h2>
+
+        <p class="text-center">または</p>
+
+        <p id="error_msg" class="text-danger text-center"></p>
+
+        <form method="post" class="row g-3">
+            <div class="col-md-6">
+                <label for="username" class="form-label">ユーザ名</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="ニックネームを入力 (必須)"
+                    required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="email" class="form-label">メールアドレス</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="ex@example.jp (任意)">
+            </div>
+
+            <div class="col-md-6">
+                <label for="password" class="form-label">パスワード</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="confirm_password" class="form-label">パスワード確認</label>
+                <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary" onclick="return confirmPassword();">登録</button>
+            </div>
+        </form>
+        <div>
+            <p class="text-center mt-3">アカウントをお持ちですか？ <a href="/auth/login">ログイン</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
