@@ -11,7 +11,7 @@ func ExsistUser(username string) (bool) {
 	defer db.Close()
 
 	var count int
-	err := db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE name = $1`, username).Scan(&count)
+	err := db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE username = $1`, username).Scan(&count)
 	if err != nil {
 		slog.Error("Error checking if user exsist: " + err.Error())
 		return false

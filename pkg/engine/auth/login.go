@@ -2,7 +2,9 @@ package auth
 
 import (
 	"envmanager/pkg/db/read"
-	"log/slog"
+	"envmanager/pkg/general/encrypt"
+	"envmanager/pkg/session"
+	"envmanager/pkg/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +19,11 @@ func loginPost(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	slog.Info("Username: " + username)
-	slog.Info("Password: " + password)
-
 	if username == "" || password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Username or password is empty"})
 		return
 	} else {
-		err := read.ReadUser(username)
+		user, err := read.ReadUser(username)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{ 
 				"error": "User not found", 
@@ -33,7 +32,21 @@ func loginPost(c *gin.Context) {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "User found"})
-		return
+		err = encrypt.CompareHashAndPassword(user.Password, password)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Password is incorrect"})
+			return
+		}
+		
+		session_info, err := model.Session_model{
+			Userid: user.Userid,
+			Username: username,
+			Logined: true,
+		}.Json()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Session error"})
+			return
+		}
+		session.NewSession(c, "session", session_info)
 	}
 }

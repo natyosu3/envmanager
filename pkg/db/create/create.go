@@ -7,7 +7,7 @@ import (
 )
 
 var sql_stm[] string = []string { 
-	`create table IF NOT EXISTS "User" (id text PRIMARY KEY, name text UNIQUE, email text, password text)`, 
+	`create table IF NOT EXISTS "User" (userid text PRIMARY KEY, username text UNIQUE, email text, password text)`, 
 	`create table IF NOT EXISTS "element" (id int PRIMARY KEY, name text, value text)`, 
 }
 
@@ -32,7 +32,7 @@ func CreateUser(username string, hashed_password string, email string) error {
 
 	userid := random.MakeRandomId()
 
-	sql := `insert into "User" (id, name, email, password) values ($1, $2, $3, $4)`
+	sql := `insert into "User" (userid, username, email, password) values ($1, $2, $3, $4)`
 	_, err := db.Exec(sql, userid, username, email, hashed_password)
 	if err != nil {
 		fmt.Println("Error creating user: ", err)

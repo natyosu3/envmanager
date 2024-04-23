@@ -1,31 +1,21 @@
 package read
 
 import (
+	"envmanager/pkg/db/model"
 	"envmanager/pkg/db"
-	"log/slog"
 )
 
-var (
-	id string
-)
 
-func ReadUser(username string) (error) {
+func ReadUser(username string) (*model.User, error) {
 	db := db.Connect()
 	defer db.Close()
 
-	rows, err := db.Query(`SELECT id FROM "User" WHERE name = $1`, username)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
+	var db_user model.User
 
-	for rows.Next() {
-		err := rows.Scan(&id)
-		if err != nil {
-			return err
-		}
-		slog.Info("User found: " + username + id)
+	err := db.QueryRow(`SELECT userid, password FROM "User" WHERE username = $1`, username).Scan(&db_user.Userid, &db_user.Password)
+	if err != nil {
+		return nil, err
 	}
 	
-	return nil
+	return &db_user, nil
 }
