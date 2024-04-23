@@ -7,8 +7,8 @@ import (
 )
 
 var sql_stm[] string = []string { 
-	`create table IF NOT EXISTS "User" (id text, name text, email text, password text)`, 
-	`create table IF NOT EXISTS "element" (id int, name text, value text)`, 
+	`create table IF NOT EXISTS "User" (id text PRIMARY KEY, name text UNIQUE, email text, password text)`, 
+	`create table IF NOT EXISTS "element" (id int PRIMARY KEY, name text, value text)`, 
 }
 
 

@@ -2,9 +2,9 @@ package session
 
 import (
 	"envmanager/pkg/general/random"
+	"log/slog"
+	"os"
 	"time"
-  "log/slog"
-  "os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -28,10 +28,12 @@ func init() {
   })
 }
 
-func NewSession(c *gin.Context, cookieKey string, value interface{}) {
+func NewSession(c *gin.Context, cookieKey string, value []byte) {
   SessionId := random.MakeRandomId()
-  client.Set(c, SessionId, value, 0)
-  c.SetCookie(cookieKey, SessionId, 60, "/", "", false, true)
+
+
+  client.Set(c, SessionId, string(value), 24*30*time.Hour)
+  c.SetCookie(cookieKey, SessionId, 0, "/", "", false, true)
 }
 
 func SetSession(c *gin.Context, cookieKey string, value interface{}) {
@@ -42,12 +44,16 @@ func SetSession(c *gin.Context, cookieKey string, value interface{}) {
   client.Set(c, SessionId, value, 24*30*time.Hour)
 }
 
-func GetSession(c *gin.Context, cookieKey string) interface{} {
+func GetSession(c *gin.Context, cookieKey string) []byte {
 	SessionId, err := c.Cookie(cookieKey)
   if err != nil {
     return nil
   }
-  value := client.Get(c, SessionId).Val()
+  value, err := client.Get(c, SessionId).Bytes()
+  if err != nil {
+    slog.Error("Error getting session: " + err.Error())
+    return nil
+  }
   return value
 }
 

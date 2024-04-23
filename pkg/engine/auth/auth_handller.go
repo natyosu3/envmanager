@@ -8,9 +8,9 @@ func LoginGet() gin.HandlerFunc {
 	return loginGet
 }
 
-// func LoginPost() gin.HandlerFunc {
-// 	return loginPost
-// }
+func LoginPost() gin.HandlerFunc {
+	return loginPost
+}
 
 
 func SignupGet() gin.HandlerFunc {
