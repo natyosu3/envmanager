@@ -2,13 +2,14 @@ package create
 
 import (
 	"envmanager/pkg/db"
-	"fmt"
 	"envmanager/pkg/general/random"
+	"log/slog"
 )
 
 var sql_stm[] string = []string { 
 	`create table IF NOT EXISTS "User" (userid text PRIMARY KEY, username text UNIQUE, email text, password text)`, 
-	`create table IF NOT EXISTS "element" (id int PRIMARY KEY, name text, value text)`, 
+	`create table IF NOT EXISTS "service" (id text PRIMARY KEY, userid text, service_name text)`,
+	`create table IF NOT EXISTS "env" (id text PRIMARY KEY, service_id text, env_name text, env_value text)`,
 }
 
 
@@ -19,7 +20,7 @@ func CreateDefaultTable() {
 	for _, sql := range sql_stm {
 		_, err := db.Exec(sql)
 		if err != nil {
-			fmt.Println("Error creating table: ", err)
+			slog.Error("Error creating table: ", err)
 			return
 		}
 	}
@@ -35,7 +36,7 @@ func CreateUser(username string, hashed_password string, email string) error {
 	sql := `insert into "User" (userid, username, email, password) values ($1, $2, $3, $4)`
 	_, err := db.Exec(sql, userid, username, email, hashed_password)
 	if err != nil {
-		fmt.Println("Error creating user: ", err)
+		slog.Error("Error inserting user: ", err)
 		return err
 	}
 
