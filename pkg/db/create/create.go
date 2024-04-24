@@ -8,8 +8,8 @@ import (
 
 var sql_stm[] string = []string { 
 	`create table IF NOT EXISTS "User" (userid text PRIMARY KEY, username text UNIQUE, email text, password text)`, 
-	`create table IF NOT EXISTS "service" (service_id text PRIMARY KEY, userid text, service_name text)`,
-	`create table IF NOT EXISTS "env" (id text PRIMARY KEY, service_id text, env_name text, env_value text)`,
+	`create table IF NOT EXISTS "Service" (service_id text PRIMARY KEY, userid text, service_name text, foreign key(userid) references "User"(userid))`,
+	`create table IF NOT EXISTS "Env" (envid text PRIMARY KEY, service_id text, env_name text, env_value text, foreign key(service_id) references "Service"(service_id))`,
 }
 
 
@@ -49,11 +49,21 @@ func CreateService(userid string, service_name string, env_names []string, env_v
 
 	id := random.MakeRandomNumberId()
 
-	sql := `insert into "service" (service_id, userid, service_name) values ($1, $2, $3)`
+	sql := `insert into "Service" (service_id, userid, service_name) values ($1, $2, $3)`
 	_, err := db.Exec(sql, id, userid, service_name)
 	if err != nil {
 		slog.Error("Error inserting service: ", err)
 		return err
+	}
+
+	for i := 0; i < len(env_names); i++ {
+		env_id := random.MakeRandomNumberId()
+		sql := `insert into "Env" (envid, service_id, env_name, env_value) values ($1, $2, $3, $4)`
+		_, err := db.Exec(sql, env_id, id, env_names[i], env_values[i])
+		if err != nil {
+			slog.Error("Error inserting env: ", err)
+			return err
+		}
 	}
 
 	return nil
