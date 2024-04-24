@@ -29,7 +29,7 @@ func init() {
 }
 
 func NewSession(c *gin.Context, cookieKey string, value []byte) {
-  SessionId := random.MakeUuid()
+  SessionId := random.MakeRandomStringId()
 
 
   client.Set(c, SessionId, string(value), 24*30*time.Hour)
