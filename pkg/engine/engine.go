@@ -26,9 +26,10 @@ func Engine(r *gin.Engine) *gin.Engine {
 		mypageGroup.GET("/", mypage.MypageGet())
 	}
 	serviceGroup := r.Group("/service")
-	{
+	{	
+		serviceGroup.GET("/dashboard", service.DashboardGet())
+		serviceGroup.GET("/:id", service.DetailGet())
 		serviceGroup.POST("/create", service.ServiceCreatePost())
-		serviceGroup.GET("/", service.ServiceGet())
 	}
 
 	return r
