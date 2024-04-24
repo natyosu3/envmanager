@@ -13,16 +13,15 @@ import (
 
 
 func loginGet(c *gin.Context) {
-	sessionData := session.GetSession(c, "session")
-	var session model.Session_model
-	err := json.Unmarshal(sessionData, &session)
-	if err != nil {
-		c.HTML(http.StatusOK, "login.html", gin.H{
-			"error": "Session error",
-		})
-		return
+	sessionInfo := model.Session_model{}
+	if sessionData := session.GetSession(c, "session"); sessionData != nil {
+		if err := json.Unmarshal(sessionData, &sessionInfo); err != nil {
+			c.HTML(http.StatusOK, "login.html", gin.H{"error": "Session error"})
+			return
+		}
 	}
-	if session.Logined {
+	
+	if sessionInfo.Logined {
 		c.Redirect(http.StatusFound, "/mypage")
 	} else {
 		c.HTML(http.StatusOK, "login.html", gin.H{})

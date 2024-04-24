@@ -14,7 +14,7 @@ func myapageGet(c *gin.Context) {
 	var session_info model.Session_model
 	session_data := session.GetSession(c, "session")
 	if session_data == nil {
-		c.Redirect(http.StatusMovedPermanently, "/login")
+		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
 	}
 
@@ -27,5 +27,6 @@ func myapageGet(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "mypage.html", gin.H{
 		"session": session_info,
+		"IsAuthenticated": session_info.Logined,
 	})
 }
