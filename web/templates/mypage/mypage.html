@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mypage</title>
-    <link rel="stylesheet" href="/static/mypage/mypage.css">
     {{ template "head" . }}
 </head>
 <body>
@@ -12,25 +11,6 @@
     <h1>Mypage</h1>
     <p>セッション情報: {{.session}}</p>
 
-    <button onclick="openModal()">作成</button>
-
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <form id="envForm" action="/service/create" method="post">
-                <div id="inputContainer">
-                    <input type="text" placeholder="サービス名" name="service_name">
-                    <div class="inputGp">
-                        <input type="text" placeholder="ENV_NAME" name="env_name">
-                        <input type="text" placeholder="ENV_VALUE" name="env_value">
-                    </div>
-                </div>
-                <button type="button" onclick="addInput()">環境変数を追加</button>
-                <button type="submit">送信</button>
-            </form>
-        </div>
-    </div>
-    
-    <script src="/static/mypage/mypage.js"></script>
+    <a href="/service/dashboard">ダッシュボード</a>
 </body>
 </html>
