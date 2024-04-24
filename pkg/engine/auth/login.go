@@ -1,10 +1,11 @@
 package auth
 
 import (
+	"encoding/json"
 	"envmanager/pkg/db/read"
 	"envmanager/pkg/general/encrypt"
-	"envmanager/pkg/session"
 	"envmanager/pkg/model"
+	"envmanager/pkg/session"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,20 @@ import (
 
 
 func loginGet(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.html", gin.H{})
+	sessionData := session.GetSession(c, "session")
+	var session model.Session_model
+	err := json.Unmarshal(sessionData, &session)
+	if err != nil {
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"error": "Session error",
+		})
+		return
+	}
+	if session.Logined {
+		c.Redirect(http.StatusFound, "/mypage")
+	} else {
+		c.HTML(http.StatusOK, "login.html", gin.H{})
+	}
 }
 
 func loginPost(c *gin.Context) {
