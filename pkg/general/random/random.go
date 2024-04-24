@@ -1,10 +1,13 @@
 package random
 
 import (
-	"github.com/google/uuid"
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"io"
+	"math/big"
+
+	"github.com/google/uuid"
 )
 
 func MakeRandomStringId() string {
@@ -22,5 +25,11 @@ func MakeUuid() string {
 }
 
 func MakeRandomNumberId() string {
-	return uuid.New().String()[0:12]
+    randomBytes := make([]byte, 6)
+    _, err := rand.Read(randomBytes)
+    if err != nil {
+		panic(err)
+    }
+    randomBigInt := new(big.Int).SetBytes(randomBytes)
+    return fmt.Sprintf("%012d", randomBigInt)
 }

@@ -43,7 +43,7 @@ func CreateUser(username string, hashed_password string, email string) error {
 	return nil
 }
 
-func CreateService(userid string, service_name string) error {
+func CreateService(userid string, service_name string, env_names []string, env_values []string) error {
 	db := db.Connect()
 	defer db.Close()
 

@@ -3,6 +3,7 @@ package auth
 import (
 	"envmanager/pkg/db/common"
 	"envmanager/pkg/db/create"
+	"envmanager/pkg/db/read"
 	"envmanager/pkg/general/encrypt"
 	"envmanager/pkg/model"
 	"envmanager/pkg/session"
@@ -45,8 +46,9 @@ func signupPost(c *gin.Context) {
 		return
 	}
 
+	user, _ := read.ReadUser(username)
 	session_info := model.Session_model{
-		Userid: "",
+		Userid: user.Userid,
 		Username: username,
 		Logined: true,
 	}

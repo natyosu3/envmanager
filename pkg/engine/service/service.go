@@ -8,13 +8,18 @@ import (
 	"log/slog"
 	"net/http"
 
+	"envmanager/pkg/db/create"
+
 	"github.com/gin-gonic/gin"
 )
 
 func serviceCreatePost(c *gin.Context) {
+	userid := c.PostForm("userid")
 	service_name := c.PostForm("service_name")
 	env_names := c.PostFormArray("env_name")
 	env_values := c.PostFormArray("env_value")
+
+	create.CreateService(userid, service_name, env_names, env_values)
 
 	fmt.Println(service_name)
 	fmt.Println(env_names)

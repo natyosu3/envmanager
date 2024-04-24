@@ -28,5 +28,6 @@ func myapageGet(c *gin.Context) {
 	c.HTML(http.StatusOK, "mypage.html", gin.H{
 		"session": session_info,
 		"IsAuthenticated": session_info.Logined,
+		"userid": session_info.Userid,
 	})
 }
