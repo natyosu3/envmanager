@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/service/detail.css">
+    {{ template "head" . }}
+    <title>{{ .service_name }}</title>
+</head>
+<body>
+    {{ template "navbar" .}}
+
+    <div class="container mt-2">
+        <div class="row">
+            <div id="content"></div>
+            <div class="pre-content">
+                <h2>{{ .service_name }}</h2>
+                <h3>環境変数(暗号化)</h3>
+                <div class="passarea">
+                    <textarea id="encrypted-env" cols="30" rows="10" readonly>{{ .env_data }}</textarea>
+                    <input type="password" id="password" placeholder="復号キー">
+                </div>
+                <div class="submit">
+                    <button id="decrypt" onclick="decrypt()">復号</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="" id="envs" value="">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="/static/service/detail.js"></script>
+</body>
+</html>

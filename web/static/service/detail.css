@@ -1,0 +1,83 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+/* Container Styles */
+.container {
+    max-width: 550px !important;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Heading Styles */
+h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.row {
+    padding: 20px;
+    background-color: #fff;
+    border: #fff solid 1px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+}
+
+.passarea {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+textarea {
+    width: 80%;
+    padding: 10px;
+    height: 100px;
+    margin-right: 10px !important;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none !important;
+}
+
+input[type="password"] {
+    width: 80%;
+    height: fit-content;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Submit Button Styles */
+.submit {
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
