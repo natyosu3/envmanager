@@ -74,17 +74,32 @@ func detailGet(c *gin.Context) {
 
 
 func serviceCreatePost(c *gin.Context) {
-	userid := c.PostForm("userid")
-	service_name := c.PostForm("service_name")
-	env_names := c.PostFormArray("env_name")
-	env_values := c.PostFormArray("env_value")
-
-	err := create.CreateService(userid, service_name, env_names, env_values)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Create Service Error"})
+	type Data struct {
+		ServiceId string `json:"service_id"`
+		ServiceName string `json:"service_name"`
+		Data string `json:"data"`
+	}
+	var data Data
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	session_data := session.GetSession(c, "session")
+	if session_data == nil {
+		c.Redirect(http.StatusSeeOther, "/auth/login")
+		return
+	}
+
+	var session_info model.Session_model
+	err := json.Unmarshal(session_data, &session_info)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
+		return
+	}
+
+	create.CreateService(session_info.Userid, data.ServiceId, data.ServiceName, data.Data)
 
 	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
