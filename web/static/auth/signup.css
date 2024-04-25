@@ -1,0 +1,23 @@
+.container {
+    justify-content: center;
+    align-items: center;
+}
+
+.display {
+    padding: 20px;
+    max-width: 500px;
+    background-color: aliceblue;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #ccc;
+}
+
+form {
+    padding: 20px;
+}
+
+.submit {
+    display: flex;
+    margin-top: 20px;
+    justify-content: center;
+}
