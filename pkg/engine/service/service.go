@@ -5,7 +5,6 @@ import (
 	"envmanager/pkg/db/read"
 	"envmanager/pkg/model"
 	"envmanager/pkg/session"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -34,13 +33,12 @@ func dashboardGet(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"session": session_info,
+		"session":         session_info,
 		"IsAuthenticated": session_info.Logined,
-		"userid": session_info.Userid,
-		"env_data": service_list,
+		"userid":          session_info.Userid,
+		"env_data":        service_list,
 	})
 }
-
 
 func detailGet(c *gin.Context) {
 	var session_info model.Session_model
@@ -69,15 +67,25 @@ func detailGet(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(service_id)
-}
+	service_name, envs, err := read.ReadServiceDetail(service_id)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
+		return
+	}
 
+	c.HTML(http.StatusOK, "detail.html", gin.H{
+		"session": session_info,
+		"service_name": service_name,
+		"env_data": envs,
+	})
+}
 
 func serviceCreatePost(c *gin.Context) {
 	type Data struct {
-		ServiceId string `json:"service_id"`
+		ServiceId   string `json:"service_id"`
 		ServiceName string `json:"service_name"`
-		Data string `json:"data"`
+		Data        string `json:"data"`
 	}
 	var data Data
 	if err := c.BindJSON(&data); err != nil {
@@ -103,7 +111,6 @@ func serviceCreatePost(c *gin.Context) {
 
 	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
-
 
 func serviceGet(c *gin.Context) {
 	var session_info model.Session_model
