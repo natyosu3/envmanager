@@ -49,6 +49,23 @@ func ReadService(userid string) ([]model.Service_model, error) {
 }
 
 
+// return service_name, encrypted_envs, error
+func ReadServiceDetail(service_id string) (string, string, error) {
+	db := db.Connect()
+	defer db.Close()
+
+	var service_name string
+	var encrypted_envs string
+
+	err := db.QueryRow(`SELECT service_name, envs FROM "Service" WHERE service_id = $1`, service_id).Scan(&service_name, &encrypted_envs)
+	if err != nil {
+		return "", "", err
+	}
+
+	return service_name, encrypted_envs, nil
+}
+
+
 func CheckOwner(userid string, service_id string) (bool, error) {
 	db := db.Connect()
 	defer db.Close()
