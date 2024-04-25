@@ -61,5 +61,7 @@ func loginPost(c *gin.Context) {
 			return
 		}
 		session.NewSession(c, "session", session_info)
+		c.Redirect(http.StatusSeeOther, "/mypage")
+		return
 	}
 }

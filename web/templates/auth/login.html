@@ -3,13 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/auth/login.css">
     <title>LOGIN</title>
+    {{ template "head" . }}
 </head>
 <body>
-    <p>login page</p>
-    <form action="/auth/login" method="POST">
-        <input type="text" name="username" placeholder="username">
-        <input type="password" name="password" placeholder="password">
-        <button type="submit">Login</button>
+    {{ template "navbar" . }}
+
+    <div class="container">
+        <div class="outer">
+            <div class="row">
+                <div class="title"><h1>LOGIN</h1></div>
+                <form action="/auth/login" method="post">
+                    <div class="input-group">
+                        <input type="text" name="username" placeholder="username" autocomplete="off">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="password">
+                    </div>
+                    <div class="submit"><input type="submit" value="Login"></div>
+                </form>
+                <div class="signup"><a href="/auth/signup">アカウントを作成</a></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
