@@ -22,18 +22,32 @@
             <form id="envForm" action="/service/create" method="post">
                 <input type="hidden" name="userid" value="{{.userid}}">
                 <div id="inputContainer">
-                    <input type="text" placeholder="サービス名" name="service_name">
+                    <input type="text" placeholder="サービス名" name="service_name" id="service_name">
                     <div class="inputGp">
                         <input type="text" placeholder="ENV_NAME" name="env_name">
                         <input type="text" placeholder="ENV_VALUE" name="env_value">
                     </div>
                 </div>
                 <button type="button" onclick="addInput()">環境変数を追加</button>
-                <button type="submit">送信</button>
+                <div>
+                    <input type="password" id="encrypt_key" placeholder="暗号化キーを入力(必須)">
+                    <input type="password" placeholder="再確認">
+                </div>
+                <div>
+                    <button type="button" onclick="convertJson()">JSONに変換</button>
+                </div>
+                <div>
+                    <textarea id="json" name="json" rows="10" cols="50" readonly></textarea>
+                </div>
+                <div>
+                    <input type="hidden" name="service_id" id="service_id" value="">
+                    <button type="submit">送信</button>
+                </div>
             </form>
         </div>
     </div>
     
     <script src="/static/service/dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
