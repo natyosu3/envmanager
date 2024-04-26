@@ -64,10 +64,14 @@ function createEnvView(env_data) {
     });
     bottom.innerHTML += `
         <button type="button" onclick="addInput()">環境変数を追加</button>
+        <div class="passGp">
         <input type="password" id="encrypt_key" placeholder="暗号化キーを入力(必須)" required>
         <input type="password" id="confirm_encrypt_key" placeholder="再確認" required>
-        <button type="button" onclick="convertJson()">変更を確定</button>
+        </div>
+        <div class="confirm">
         <button type="button" onclick="location.href='/service/dashboard'">戻る</button>
+        <button type="button" onclick="convertJson()">変更を確定</button>
+        </div>
     `
 }
 
@@ -128,9 +132,9 @@ function addInput() {
     const inputGp = document.createElement('div');
     inputGp.classList.add('inputGp');
     inputGp.innerHTML = `
-        <input type="text" placeholder="ENV_NAME" name="env_name">
+        <input type="text" placeholder="ENV_NAME" name="env_name" require>
         <span>=</span>
-        <input type="text" placeholder="ENV_VALUE" name="env_value">
+        <input type="text" placeholder="ENV_VALUE" name="env_value" require>
         <button type="button" onclick="removeInput(this)">削除</button>
     `;
     inputContainer.appendChild(inputGp);
