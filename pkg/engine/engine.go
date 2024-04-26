@@ -30,6 +30,7 @@ func Engine(r *gin.Engine) *gin.Engine {
 		serviceGroup.GET("/:id", service.DetailGet())
 		serviceGroup.GET("/edit/:id", service.EditServiceGet())
 		serviceGroup.POST("/create", service.ServiceCreatePost())
+		serviceGroup.POST("/update", service.UpdateServicePost())
 	}
 
 	return r

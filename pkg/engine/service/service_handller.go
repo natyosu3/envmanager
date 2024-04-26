@@ -24,3 +24,7 @@ func ServiceCreatePost() gin.HandlerFunc {
 func EditServiceGet() gin.HandlerFunc {
 	return editServiceGet
 }
+
+func UpdateServicePost() gin.HandlerFunc {
+	return updateServicePost
+}
