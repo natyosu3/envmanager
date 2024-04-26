@@ -71,13 +71,29 @@ input[type="password"] {
 
 button {
     padding: 10px 20px;
+    margin: 5px !important;
     background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px !important;
     cursor: pointer;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+
+.env {
+    display: flex;
+    justify-content: center;
+}
+
+.env input {
+    width: 50%;
+    height: fit-content;
+    padding: 10px;
+    margin: 10px 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
