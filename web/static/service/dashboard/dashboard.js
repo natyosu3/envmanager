@@ -8,6 +8,20 @@ function closeModal() {
     modal.style.display = 'none';
 }
 
+const deleteModal = document.getElementById('deleteModal');
+
+function openDeleteModal() {
+    if (document.getElementById('service_sig').value == '') {
+        alert('サービスが存在しません');
+        return
+    }
+    deleteModal.style.display = 'block';
+}
+
+function closeDeleteModal() {
+    deleteModal.style.display = 'none';
+}
+
 window.onclick = function (event) {
     if (event.target == modal) {
         closeModal();
@@ -142,3 +156,8 @@ document.getElementById("envForm").addEventListener("submit", function (event) {
             console.error('There was a problem with the POST request:', error);
         });
 });
+
+function showDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    dropdown.classList.toggle("show");
+}
