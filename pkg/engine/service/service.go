@@ -11,6 +11,7 @@ import (
 
 	"envmanager/pkg/db/create"
 	"envmanager/pkg/db/delete"
+	"envmanager/pkg/db/update"
 
 	"github.com/gin-gonic/gin"
 )
@@ -185,4 +186,51 @@ func editServiceGet(c *gin.Context) {
 		"env_data": envs,
 		"IsAuthenticated": session_info.Logined,
 	})
+}
+
+func updateServicePost(c *gin.Context) {
+	type Data struct {
+		ServiceId   string `json:"service_id"`
+		ServiceName string `json:"service_name"`
+		Data        string `json:"data"`
+	}
+	var data Data
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	session_data := session.GetSession(c, "session")
+	if session_data == nil {
+		c.Redirect(http.StatusSeeOther, "/auth/login")
+		return
+	}
+
+	var session_info model.Session_model
+	err := json.Unmarshal(session_data, &session_info)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
+		return
+	}
+
+	owner, err := common.CheckOwner(session_info.Userid, data.ServiceId)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
+		return
+	}
+	if !owner {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
+		return
+	}
+
+	err = update.UpdateService(data.ServiceId, data.Data, session_info.Userid)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Update Service Error"})
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
