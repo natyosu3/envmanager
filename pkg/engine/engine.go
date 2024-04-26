@@ -2,6 +2,7 @@ package engine
 
 import (
 	"envmanager/pkg/engine/auth"
+	"envmanager/pkg/engine/top"
 	"envmanager/pkg/engine/service"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func Engine(r *gin.Engine) *gin.Engine {
 	r.LoadHTMLGlob("web/templates/*/*.html")
 	r.Static("/static", "web/static")
 
+	r.GET("/", top.TopGet())
 	authGroup := r.Group("/auth")
 	{
 		authGroup.GET("/login", auth.LoginGet())

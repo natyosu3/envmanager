@@ -80,6 +80,7 @@ func detailGet(c *gin.Context) {
 		"session": session_info,
 		"service_name": service_name,
 		"env_data": envs,
+		"IsAuthenticated": session_info.Logined,
 	})
 }
 
