@@ -2,7 +2,6 @@ package engine
 
 import (
 	"envmanager/pkg/engine/auth"
-	"envmanager/pkg/engine/mypage"
 	"envmanager/pkg/engine/service"
 
 	"github.com/gin-gonic/gin"
@@ -21,10 +20,6 @@ func Engine(r *gin.Engine) *gin.Engine {
 		authGroup.GET("/logout", auth.LogoutGet())
 		authGroup.GET("/signup", auth.SignupGet())
 		authGroup.POST("/signup", auth.SignupPost())
-	}
-	mypageGroup := r.Group("/mypage")
-	{
-		mypageGroup.GET("/", mypage.MypageGet())
 	}
 	serviceGroup := r.Group("/service")
 	{	

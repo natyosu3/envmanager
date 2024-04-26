@@ -60,5 +60,5 @@ func signupPost(c *gin.Context) {
 	}
 	session.NewSession(c, "session", jbyte)
 
-	c.Redirect(http.StatusMovedPermanently, "/mypage")
+	c.Redirect(http.StatusMovedPermanently, "/service/dashboard")
 }

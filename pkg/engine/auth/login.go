@@ -22,7 +22,7 @@ func loginGet(c *gin.Context) {
 	}
 	
 	if sessionInfo.Logined {
-		c.Redirect(http.StatusFound, "/mypage")
+		c.Redirect(http.StatusFound, "/service/dashboard")
 	} else {
 		c.HTML(http.StatusOK, "login.html", gin.H{})
 	}
@@ -61,7 +61,7 @@ func loginPost(c *gin.Context) {
 			return
 		}
 		session.NewSession(c, "session", session_info)
-		c.Redirect(http.StatusSeeOther, "/mypage")
+		c.Redirect(http.StatusSeeOther, "/service/dashboard")
 		return
 	}
 }
