@@ -59,6 +59,7 @@ function createEnvView(env_data) {
     });
     target.innerHTML += `
         <button type="button" onclick="createDotEnv()">.ENVファイルを作成</button>
+        <button type="button" onclick="location.href='/service/edit/${env_data.service_id}'">編集</button>
         <button type="button" onclick="location.href='/service/dashboard'">戻る</button>
     `
 }
