@@ -3,12 +3,14 @@ package service
 import (
 	"encoding/json"
 	"envmanager/pkg/db/read"
+	"envmanager/pkg/db/common"
 	"envmanager/pkg/model"
 	"envmanager/pkg/session"
 	"log/slog"
 	"net/http"
 
 	"envmanager/pkg/db/create"
+	"envmanager/pkg/db/delete"
 
 	"github.com/gin-gonic/gin"
 )
@@ -56,7 +58,7 @@ func detailGet(c *gin.Context) {
 	}
 
 	service_id := c.Param("id")
-	owner, err := read.CheckOwner(session_info.Userid, service_id)
+	owner, err := common.CheckOwner(session_info.Userid, service_id)
 	if err != nil {
 		slog.Error(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
@@ -130,4 +132,32 @@ func serviceGet(c *gin.Context) {
 	c.HTML(http.StatusOK, "product.html", gin.H{
 		"session": session_info,
 	})
+}
+
+
+func deleteServicePost(c *gin.Context) {
+	session_data := session.GetSession(c, "session")
+	if session_data == nil {
+		c.Redirect(http.StatusSeeOther, "/auth/login")
+		return
+	}
+
+	var session_info model.Session_model
+	err := json.Unmarshal(session_data, &session_info)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
+		return
+	}
+
+	service_id := c.PostForm("service_id")
+
+	err = delete.DeleteService(service_id, session_info.Userid)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Delete Service Error"})
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
