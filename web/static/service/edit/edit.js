@@ -103,6 +103,7 @@ function convertJson() {
     }
 
     document.getElementById('json').value = json;
+    createPostRequest();
 }
 
 function checkEncryptKey() {
