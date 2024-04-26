@@ -63,6 +63,11 @@ function createRandomId(length) {
 
 
 function convertJson() {
+    if (document.getElementById('encrypt_key').value == '') {
+        alert('暗号化キーを入力してください');
+        return
+    }
+
     var env_names = document.getElementsByName('env_name');
     var env_values = document.getElementsByName('env_value');
 
