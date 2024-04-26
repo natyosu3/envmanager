@@ -9,12 +9,42 @@
 </head>
 <body>
     {{ template "navbar" .}}
-    <button onclick="openModal()">作成</button>
 
-    <h2>サービス一覧</h2>
-    {{range .env_data}}
-        <h2><a href="/service/{{.Service_id}}">{{.Service_name}}</a></h2>
-    {{end}}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="content">
+                <h2>ダッシュボード</h2>
+                <div class="service">
+                    <button onclick="openModal()">新規サービスを作成</button>
+                    <button class="delete-btn" onclick="">既存サービスを削除</button>
+                </div>
+                <h2>サービス一覧</h2>
+                <div class="list">
+                    {{ if not .env_data }}
+                        <p>サービスがありません</p>
+                    {{ else }}
+                    <table class="service-table">
+                        <thead>
+                            <tr>
+                                <th>Service Name</th>
+                                <th>Service ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .env_data}}
+                                <tr>
+                                    <td><b><a class="jump" href="/service/{{ .Service_id }}">{{ .Service_name }}</a></b></td>
+                                    <td>{{ .Service_id }}</td>
+                                </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -22,19 +52,19 @@
             <form id="envForm" action="/service/create" method="post">
                 <input type="hidden" name="userid" value="{{.userid}}">
                 <div id="inputContainer">
-                    <input type="text" placeholder="サービス名" name="service_name" id="service_name">
+                    <input type="text" placeholder="サービス名" name="service_name" id="service_name" required>
                     <div class="inputGp">
-                        <input type="text" placeholder="ENV_NAME" name="env_name">
-                        <input type="text" placeholder="ENV_VALUE" name="env_value">
+                        <input type="text" placeholder="ENV_NAME" name="env_name" required>
+                        <input type="text" placeholder="ENV_VALUE" name="env_value" required>
                     </div>
                 </div>
                 <button type="button" onclick="addInput()">環境変数を追加</button>
                 <div>
-                    <input type="password" id="encrypt_key" placeholder="暗号化キーを入力(必須)">
-                    <input type="password" placeholder="再確認">
+                    <input type="password" id="encrypt_key" placeholder="暗号化キーを入力(必須)" required>
+                    <input type="password" id="confirm_encrypt_key" placeholder="再確認" required>
                 </div>
                 <div>
-                    <button type="button" onclick="convertJson()">暗号化</button>
+                    <button type="button" onclick="convertJson()">暗号化(JSON)</button>
                 </div>
                 <div>
                     <textarea id="json" name="json" rows="10" cols="50" readonly></textarea>

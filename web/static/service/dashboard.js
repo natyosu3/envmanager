@@ -68,6 +68,10 @@ function convertJson() {
         return
     }
 
+    if (!checkEncryptKey()) {
+        return
+    }
+
     var env_names = document.getElementsByName('env_name');
     var env_values = document.getElementsByName('env_value');
 
@@ -90,6 +94,17 @@ function convertJson() {
     }
 
     document.getElementById('json').value = json;
+}
+
+function checkEncryptKey() {
+    var encrypt_key = document.getElementById('encrypt_key').value;
+    var confirm_encrypt_key = document.getElementById('confirm_encrypt_key').value;
+
+    if (encrypt_key != confirm_encrypt_key) {
+        alert('暗号化キーが一致しません');
+        return false;
+    }
+    return true;
 }
 
 

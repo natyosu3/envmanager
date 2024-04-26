@@ -1,3 +1,70 @@
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+.row {
+    padding: 20px;
+    background-color: #fff;
+    border: #fff solid 1px;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px
+}
+
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 3px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green */
+}
+
+.service {
+    display: flex;
+    justify-content: center;
+}
+
+.delete-btn {
+    background-color: #c13434;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 3px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-btn:hover {
+    background-color: #a12b2b;
+}
+
+.jump {
+    color: #007bff; /* Blue */
+    text-decoration: none;
+}
+
+.jump:hover {
+    text-decoration: underline;
+}
+
+
+
 .modal {
     display: none;
     position: fixed;
@@ -45,4 +112,41 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-right: 30px;
+}
+
+
+.list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+
+}
+
+.service-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+.service-table th,
+.service-table td {
+    padding: 12px 15px;
+}
+.service-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.service-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+
+.service-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
