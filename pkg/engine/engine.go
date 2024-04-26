@@ -28,6 +28,7 @@ func Engine(r *gin.Engine) *gin.Engine {
 		serviceGroup.GET("/dashboard", service.DashboardGet())
 		serviceGroup.POST("/delete", service.DeleteServicePost())
 		serviceGroup.GET("/:id", service.DetailGet())
+		serviceGroup.GET("/edit/:id", service.EditServiceGet())
 		serviceGroup.POST("/create", service.ServiceCreatePost())
 	}
 

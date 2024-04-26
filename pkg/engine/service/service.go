@@ -142,3 +142,47 @@ func deleteServicePost(c *gin.Context) {
 
 	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
+
+
+func editServiceGet(c *gin.Context) {
+	session_data := session.GetSession(c, "session")
+	if session_data == nil {
+		c.Redirect(http.StatusSeeOther, "/auth/login")
+		return
+	}
+
+	var session_info model.Session_model
+	err := json.Unmarshal(session_data, &session_info)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
+		return
+	}
+
+	service_id := c.Param("id")
+	owner, err := common.CheckOwner(session_info.Userid, service_id)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
+		return
+	}
+	if !owner {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
+		return
+	}
+
+	service_name, envs, err := read.ReadServiceDetail(service_id)
+	if err != nil {
+		slog.Error(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
+		return
+	}
+
+	c.HTML(http.StatusOK, "edit.html", gin.H{
+		"session": session_info,
+		"service_name": service_name,
+		"service_id": service_id,
+		"env_data": envs,
+		"IsAuthenticated": session_info.Logined,
+	})
+}

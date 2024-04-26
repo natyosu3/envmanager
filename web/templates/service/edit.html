@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+<body>
+    <h1>Edit</h1>
+
+    <div id="content"></div>
+    <div id="bottom"></div>
+
+    <input type="hidden" id="service_name" value="{{ .service_name }}">
+    <input type="hidden" id="service_id" value="{{ .service_id }}">
+    <input type="hidden" id="json" value="{{ .env_data }}">
+    <script src="/static/service/edit/edit.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</body>
+</html>

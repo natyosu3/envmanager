@@ -20,3 +20,7 @@ func DetailGet() gin.HandlerFunc {
 func ServiceCreatePost() gin.HandlerFunc {
 	return serviceCreatePost
 }
+
+func EditServiceGet() gin.HandlerFunc {
+	return editServiceGet
+}
