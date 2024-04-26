@@ -12,6 +12,10 @@ func LoginPost() gin.HandlerFunc {
 	return loginPost
 }
 
+func LogoutGet() gin.HandlerFunc {
+	return logoutGet
+}
+
 
 func SignupGet() gin.HandlerFunc {
 	return signupGet
