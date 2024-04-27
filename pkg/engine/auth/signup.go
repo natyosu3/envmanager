@@ -9,13 +9,32 @@ import (
 	"envmanager/pkg/session"
 	"log/slog"
 	"net/http"
+	"encoding/json"
 
 	"github.com/gin-gonic/gin"
 )
 
 
 func signupGet(c *gin.Context) {
-	c.HTML(http.StatusOK, "signup.html", gin.H{})
+	var session_info model.Session_model
+	session_data := session.GetSession(c, "session")
+	if session_data == nil {
+		c.HTML(http.StatusOK, "signup.html", gin.H{
+			"IsAuthenticated": session_info.Logined,
+		})
+		return
+	} else {
+		err := json.Unmarshal(session_data, &session_info)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
+			return
+		}
+		c.HTML(http.StatusOK, "signup.html", gin.H{
+			"IsAuthenticated": session_info.Logined,
+		})
+		return
+	}
 }
 
 

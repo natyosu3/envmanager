@@ -21,6 +21,7 @@ func dashboardGet(c *gin.Context) {
 	session_data := session.GetSession(c, "session")
 	if session_data == nil {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
+		return
 	}
 
 	err := json.Unmarshal(session_data, &session_info)
