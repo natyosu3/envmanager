@@ -194,5 +194,5 @@ document.querySelector('input[type="file"]').addEventListener('change', function
     };
     reader.readAsText(event.target.files[0]);
 
-
+    event.target.value = "";
 });
