@@ -3,12 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EnvManager</title>
+    <link rel="stylesheet" href="/static/top/style.css">
+    <title>EnvEase</title>
     {{ template "head" . }}
 </head>
 <body>
     {{ template "navbar" . }}
-    
-    <h1>welcome</h1>
+
+    <section class="features">
+        <h2>特長</h2>
+        <ul>
+            <li>簡単な管理: 環境変数を追加、編集、削除するのが簡単です。</li>
+            <li>セキュア: サーバ側には暗号化されたデータしか保存されません。</li>
+            <li>使いやすいインターフェース: 直感的なUIでストレスなく操作できます。</li>
+        </ul>
+    </section>
+
+    <section class="main-features">
+        <h2>主な機能</h2>
+        <img src="/static/img/logic.png" alt="">
+        <ul>
+            <li>環境変数の追加</li>
+            <li>環境変数の編集</li>
+            <li>環境変数の削除</li>
+        </ul>
+    </section>
+
+    <section class="hero">
+        <h2>EnvEaseを使ってみましょう</h2>
+        <a href="#">新規登録</a>
+
+        <p>既にアカウントをお持ちの方は<a href="#">ログイン</a></p>
+
+    </section>
+
+    <section class="contact object-fit-fill">
+        <h2>お問い合わせ</h2>
+        <a href="#">お問い合わせフォーム</a>
+    </section>
+
+    <footer>
+        <p>EnvManger - 環境変数の管理をもっと簡単に。</p>
+        <p>&copy; 2024 EnvManger. All rights reserved.</p>
+    </footer>
 </body>
 </html>
