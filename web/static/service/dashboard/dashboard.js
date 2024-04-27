@@ -82,6 +82,11 @@ function convertJson() {
         return
     }
 
+    if (document.getElementById('service_name').value == '') {
+        alert('サービス名を入力してください');
+        return
+    }
+
     if (!checkEncryptKey()) {
         return
     }
@@ -161,3 +166,33 @@ function showDropdown() {
     var dropdown = document.getElementById("dropdown");
     dropdown.classList.toggle("show");
 }
+
+
+document.querySelector('input[type="file"]').addEventListener('change', function(event) {
+    alert('File selected');
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var contents = event.target.result;
+
+        var env_names = [];
+        var env_values = [];
+        var lines = contents.split('\n');
+        for (var line = 0; line < lines.length; line++) {
+            if (line > 0) {
+                addInput();
+            }
+            var parts = lines[line].split('=');
+            env_names.push(parts[0]);
+            env_values.push(parts[1]);
+        }
+        var env_names_elm = document.getElementsByName("env_name")
+        var env_values_elm = document.getElementsByName("env_value")
+        for (var i = 0; i < env_names.length; i++) {
+            env_names_elm[i].value = env_names[i];
+            env_values_elm[i].value = env_values[i];
+        }
+    };
+    reader.readAsText(event.target.files[0]);
+
+
+});
