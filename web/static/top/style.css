@@ -38,13 +38,32 @@ img {
     margin-left: 20px;
 }
 
-.contact a {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
-    text-decoration: none;
+.hero {
+    margin-bottom: 60px;
 }
+
+.bb {
+    display: flex;
+    justify-content: center;
+}
+
+/* ボタンのスタイル */
+.register-button {
+    background-color: #4CAF50; /* ボタンの背景色 */
+    color: white; /* ボタンのテキストの色 */
+    padding: 10px 20px; /* ボタンのパディング */
+    border: none; /* ボタンの枠線を削除 */
+    border-radius: 5px; /* ボタンの角丸 */
+    cursor: pointer; /* マウスをボタンの上に置いたときのカーソルの形 */
+    transition: background-color 0.3s; /* ホバーエフェクトの速度 */
+  }
+  
+  /* ボタンのホバーエフェクト */
+  .register-button:hover {
+    background-color: #45a049; /* ホバー時の背景色 */
+  }
+  
+
 
 footer {
     background-color: #333;
