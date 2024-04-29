@@ -10,12 +10,19 @@ body {
     background-color: #f7f7f7;
 }
 
+.content {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
 img {
     max-width: 100%;
     height: auto;
 }
 
 .features, .main-features, .contact {
+
     width: 40%;
     background-color: #fff;
     padding: 20px;
