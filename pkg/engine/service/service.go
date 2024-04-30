@@ -1,9 +1,8 @@
 package service
 
 import (
-	"encoding/json"
-	"envmanager/pkg/db/read"
 	"envmanager/pkg/db/common"
+	"envmanager/pkg/db/read"
 	"envmanager/pkg/model"
 	"envmanager/pkg/session"
 	"log/slog"
@@ -17,73 +16,59 @@ import (
 )
 
 func dashboardGet(c *gin.Context) {
-	var session_info model.Session_model
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
-	}
+	} else {
+		data := data.(*model.Session_model)
 
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-	}
+		service_list, err := read.ReadService(data.Userid)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Error"})
+		}
 
-	service_list, err := read.ReadService(session_info.Userid)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Error"})
+		c.HTML(http.StatusOK, "dashboard.html", gin.H{
+			"IsAuthenticated": data.Logined,
+			"userid":          data.Userid,
+			"env_data":        service_list,
+		})
 	}
-
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"session":         session_info,
-		"IsAuthenticated": session_info.Logined,
-		"userid":          session_info.Userid,
-		"env_data":        service_list,
-	})
 }
 
 func detailGet(c *gin.Context) {
-	var session_info model.Session_model
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
-	}
+	} else {
+		data := data.(*model.Session_model)
 
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
+		service_id := c.Param("id")
+		owner, err := common.CheckOwner(data.Userid, service_id)
 
-	service_id := c.Param("id")
-	owner, err := common.CheckOwner(session_info.Userid, service_id)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
-		return
-	}
-	if !owner {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
-		return
-	}
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
+			return
+		}
+		if !owner {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
+			return
+		}
 
-	service_name, envs, err := read.ReadServiceDetail(service_id)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
-		return
-	}
+		service_name, envs, err := read.ReadServiceDetail(service_id)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
+			return
+		}
 
-	c.HTML(http.StatusOK, "detail.html", gin.H{
-		"session": session_info,
-		"service_name": service_name,
-		"env_data": envs,
-		"IsAuthenticated": session_info.Logined,
-	})
+		c.HTML(http.StatusOK, "detail.html", gin.H{
+			"service_name":    service_name,
+			"env_data":        envs,
+			"IsAuthenticated": data.Logined,
+		})
+	}
 }
 
 func serviceCreatePost(c *gin.Context) {
@@ -98,95 +83,68 @@ func serviceCreatePost(c *gin.Context) {
 		return
 	}
 
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if session_data := session.Default(c, "session", &model.Session_model{}).Get(c); session_data == nil || session_data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
+	} else {
+		session_data := session_data.(*model.Session_model)
+		create.CreateService(session_data.Userid, data.ServiceId, data.ServiceName, data.Data)
+
+		c.Redirect(http.StatusSeeOther, "/service/dashboard")
 	}
-
-	var session_info model.Session_model
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
-
-	create.CreateService(session_info.Userid, data.ServiceId, data.ServiceName, data.Data)
-
-	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
-
 
 func deleteServicePost(c *gin.Context) {
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
+	} else {
+		data := data.(*model.Session_model)
+
+		service_id := c.PostForm("service_id")
+		err := delete.DeleteService(service_id, data.Userid)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Delete Service Error"})
+			return
+		}
+		c.Redirect(http.StatusSeeOther, "/service/dashboard")
 	}
-
-	var session_info model.Session_model
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
-
-	service_id := c.PostForm("service_id")
-
-	err = delete.DeleteService(service_id, session_info.Userid)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Delete Service Error"})
-		return
-	}
-
-	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }
 
-
 func editServiceGet(c *gin.Context) {
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
-	}
+	} else {
+		data := data.(*model.Session_model)
 
-	var session_info model.Session_model
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
+		service_id := c.Param("id")
+		owner, err := common.CheckOwner(data.Userid, service_id)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
+			return
+		}
+		if !owner {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
+			return
+		}
 
-	service_id := c.Param("id")
-	owner, err := common.CheckOwner(session_info.Userid, service_id)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
-		return
-	}
-	if !owner {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
-		return
-	}
+		service_name, envs, err := read.ReadServiceDetail(service_id)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
+			return
+		}
 
-	service_name, envs, err := read.ReadServiceDetail(service_id)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Read Service Detail Error"})
-		return
+		c.HTML(http.StatusOK, "edit.html", gin.H{
+			"service_name":    service_name,
+			"service_id":      service_id,
+			"env_data":        envs,
+			"IsAuthenticated": data.Logined,
+		})
 	}
-
-	c.HTML(http.StatusOK, "edit.html", gin.H{
-		"session": session_info,
-		"service_name": service_name,
-		"service_id": service_id,
-		"env_data": envs,
-		"IsAuthenticated": session_info.Logined,
-	})
 }
 
 func updateServicePost(c *gin.Context) {
@@ -201,37 +159,29 @@ func updateServicePost(c *gin.Context) {
 		return
 	}
 
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
+	if session_data := session.Default(c, "session", &model.Session_model{}).Get(c); session_data == nil || session_data.(*model.Session_model).Userid == "" {
 		c.Redirect(http.StatusSeeOther, "/auth/login")
 		return
-	}
+	} else {
+		session_data := session_data.(*model.Session_model)
 
-	var session_info model.Session_model
-	err := json.Unmarshal(session_data, &session_info)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
+		owner, err := common.CheckOwner(session_data.Userid, data.ServiceId)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
+			return
+		}
+		if !owner {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
+			return
+		}
 
-	owner, err := common.CheckOwner(session_info.Userid, data.ServiceId)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Check Owner Error"})
-		return
+		err = update.UpdateService(data.ServiceId, data.Data, session_data.Userid)
+		if err != nil {
+			slog.Error(err.Error())
+			c.JSON(http.StatusBadRequest, gin.H{"message": "Update Service Error"})
+			return
+		}
+		c.Redirect(http.StatusSeeOther, "/service/dashboard")
 	}
-	if !owner {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Not Owner"})
-		return
-	}
-
-	err = update.UpdateService(data.ServiceId, data.Data, session_info.Userid)
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Update Service Error"})
-		return
-	}
-
-	c.Redirect(http.StatusSeeOther, "/service/dashboard")
 }

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"envmanager/pkg/db/read"
 	"envmanager/pkg/general/encrypt"
 	"envmanager/pkg/model"
@@ -12,19 +11,19 @@ import (
 )
 
 
+
+
 func loginGet(c *gin.Context) {
-	sessionInfo := model.Session_model{}
-	if sessionData := session.GetSession(c, "session"); sessionData != nil {
-		if err := json.Unmarshal(sessionData, &sessionInfo); err != nil {
-			c.HTML(http.StatusOK, "login.html", gin.H{"error": "Session error"})
-			return
-		}
-	}
-	
-	if sessionInfo.Logined {
-		c.Redirect(http.StatusFound, "/service/dashboard")
-	} else {
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
 		c.HTML(http.StatusOK, "login.html", gin.H{})
+		return
+	} else {
+		data := data.(*model.Session_model)
+		c.HTML(http.StatusOK, "login.html", gin.H{
+			"session":         data,
+			"IsAuthenticated": data.Logined,
+		})
+		return
 	}
 }
 
@@ -51,16 +50,12 @@ func loginPost(c *gin.Context) {
 			return
 		}
 		
-		session_info, err := model.Session_model{
+		session_info := model.Session_model{
 			Userid: user.Userid,
 			Username: username,
 			Logined: true,
-		}.Json()
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Session error"})
-			return
 		}
-		session.NewSession(c, "session", session_info)
+		session.Default(c, "session", &model.Session_model{}).Set(c, session_info)
 		c.Redirect(http.StatusSeeOther, "/service/dashboard")
 		return
 	}

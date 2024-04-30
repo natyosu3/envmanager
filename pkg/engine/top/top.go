@@ -5,27 +5,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"encoding/json"
 	"envmanager/pkg/model"
 	"envmanager/pkg/session"
-	"log/slog"
 )
 
-
 func indexGet(c *gin.Context) {
-	var session_info model.Session_model
-	session_data := session.GetSession(c, "session")
-	if len(session_data) != 0  {
-		err := json.Unmarshal(session_data, &session_info)
-		if err != nil {
-			slog.Error(err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-			return
-		}
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"IsAuthenticated": false,
+		})
+		return
+	} else {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"IsAuthenticated": data.(*model.Session_model).Logined,
+			"userid":          data.(*model.Session_model).Userid,
+		})
+		return
 	}
-
-	c.HTML(http.StatusOK, "index.html", gin.H{
-		"session":         session_info,
-		"IsAuthenticated": session_info.Logined,
-	})
 }

@@ -9,34 +9,23 @@ import (
 	"envmanager/pkg/session"
 	"log/slog"
 	"net/http"
-	"encoding/json"
 
 	"github.com/gin-gonic/gin"
 )
 
-
 func signupGet(c *gin.Context) {
-	var session_info model.Session_model
-	session_data := session.GetSession(c, "session")
-	if session_data == nil {
-		c.HTML(http.StatusOK, "signup.html", gin.H{
-			"IsAuthenticated": session_info.Logined,
-		})
+	if data := session.Default(c, "session", &model.Session_model{}).Get(c); data == nil || data.(*model.Session_model).Userid == "" {
+		c.HTML(http.StatusOK, "signup.html", gin.H{})
 		return
 	} else {
-		err := json.Unmarshal(session_data, &session_info)
-		if err != nil {
-			slog.Error(err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-			return
-		}
+		data := data.(*model.Session_model)
 		c.HTML(http.StatusOK, "signup.html", gin.H{
-			"IsAuthenticated": session_info.Logined,
+			"session":         data,
+			"IsAuthenticated": data.Logined,
 		})
 		return
 	}
 }
-
 
 func signupPost(c *gin.Context) {
 	username := c.PostForm("username")
@@ -67,17 +56,10 @@ func signupPost(c *gin.Context) {
 
 	user, _ := read.ReadUser(username)
 	session_info := model.Session_model{
-		Userid: user.Userid,
+		Userid:   user.Userid,
 		Username: username,
-		Logined: true,
+		Logined:  true,
 	}
-	jbyte, err := session_info.Json()
-	if err != nil {
-		slog.Error(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Session Convert Json Error"})
-		return
-	}
-	session.NewSession(c, "session", jbyte)
-
+	session.Default(c, "session", &model.Session_model{}).Set(c, session_info)
 	c.Redirect(http.StatusMovedPermanently, "/service/dashboard")
 }
