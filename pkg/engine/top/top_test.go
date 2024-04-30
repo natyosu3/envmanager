@@ -1,6 +1,7 @@
 package top
 
 import (
+	_ "envmanager/pkg/general/test"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -32,23 +33,44 @@ func searchGoMod(dir string) (string, error) {
 	return searchGoMod(parentDir)
 }
 
+
+var testcase = []struct {
+	name string
+	session http.Cookie
+	expected int
+}{
+	{
+		name: "正常系",
+		session: http.Cookie{
+			Name:  "session",
+			Value: "session",
+		},
+		expected: http.StatusOK,
+	},
+	{
+		name: "異常系",
+		session: http.Cookie{},
+		expected: http.StatusOK,
+	},
+}
+
+
 func TestIndexGet(t *testing.T) {
-	gin.SetMode(gin.TestMode)
 	r := gin.New()
 	rootPath, _ := searchGoMod(func() string { dir, _ := os.Getwd(); return dir }())
 
 	r.LoadHTMLGlob(rootPath + "/web/templates/*/*.html")
 	r.GET("/", indexGet)
 
-	// クッキーをセット
-	cookie := &http.Cookie{
-		Name:  "session",
-		Value: "session",
-	}
-	req := httptest.NewRequest("GET", "/", nil)
-	req.AddCookie(cookie)
+	for _, tt := range testcase {
+		t.Run(tt.name, func(t *testing.T) {
+			assert := assert.New(t)
+			req := httptest.NewRequest("GET", "/", nil)
+			req.AddCookie(&tt.session)
 
-	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
-	assert.Equal(t, http.StatusOK, w.Code)
+			w := httptest.NewRecorder()
+			r.ServeHTTP(w, req)
+			assert.Equal(tt.expected, w.Code)
+		})
+	}
 }
