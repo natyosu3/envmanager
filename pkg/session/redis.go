@@ -19,14 +19,22 @@ func init() {
 	if err != nil {
 		slog.Error("Error loading .env file")
 	}
-	REDIS_HOST := os.Getenv("REDIS_HOST")
-	REDIS_PASSWORD := os.Getenv("REDIS_PASSWORD")
+	RUN_TYPE := os.Getenv("RUN_TYPE")
+	if RUN_TYPE == "production" {
+		gin.SetMode(gin.ReleaseMode)
+		REDIS_URL := os.Getenv("REDIS_URL")
+		opt, _ := redis.ParseURL(REDIS_URL)
+		client = redis.NewClient(opt)
+	} else {
+		REDIS_HOST := os.Getenv("REDIS_HOST")
+		REDIS_PASSWORD := os.Getenv("REDIS_PASSWORD")
 
-	client = redis.NewClient(&redis.Options{
-		Addr:     REDIS_HOST,
-		Password: REDIS_PASSWORD,
-		DB:       0,
-	})
+		client = redis.NewClient(&redis.Options{
+			Addr:     REDIS_HOST,
+			Password: REDIS_PASSWORD,
+			DB:       0,
+		})
+	}
 }
 
 type Session struct {
@@ -72,7 +80,6 @@ func (s *Session) Get(c *gin.Context) interface{} {
 
 	value, err := client.Get(c, SessionId).Bytes()
 	if err != nil {
-		slog.Error("Error getting session: " + err.Error())
 		return nil
 	}
 
