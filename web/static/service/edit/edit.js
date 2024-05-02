@@ -153,7 +153,7 @@ function createPostRequest() {
     }
 
     // POSTリクエストを送信
-    fetch('http://localhost:8080/service/update', {
+    fetch('https://envmanager.natyosu.com/service/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

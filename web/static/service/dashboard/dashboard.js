@@ -143,7 +143,7 @@ document.getElementById("envForm").addEventListener("submit", function (event) {
     }
 
     // POSTリクエストを送信
-    fetch('http://localhost:8080/service/create', {
+    fetch('https://envmanager.natyosu.com/service/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
